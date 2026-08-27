@@ -12,9 +12,34 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+// 배포 주소를 기준점으로 두면 /og.png 같은 상대 경로도 절대 URL로 해석됩니다.
+const siteUrl = new URL('https://quantico-analytics-dashboard.h200082.chatgpt.site');
+
 export const metadata: Metadata = {
+  metadataBase: siteUrl,
   title: 'Quantico Analytics Dashboard',
   description: 'A responsive shadcn analytics dashboard study project.',
+  openGraph: {
+    title: 'Quantico Analytics Dashboard',
+    description: 'A responsive shadcn analytics dashboard study project.',
+    url: siteUrl,
+    siteName: 'Quantico Analytics Dashboard',
+    images: [
+      {
+        url: new URL('/og.png', siteUrl).toString(),
+        width: 1200,
+        height: 630,
+        alt: 'Quantico Analytics shadcn dashboard study project',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Quantico Analytics Dashboard',
+    description: 'A responsive shadcn analytics dashboard study project.',
+    images: [new URL('/og.png', siteUrl).toString()],
+  },
 };
 
 export default function RootLayout({
