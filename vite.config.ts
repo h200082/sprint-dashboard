@@ -1,3 +1,8 @@
+/**
+ * 역할: Vite와 Vinext를 연결하고 Tailwind 처리, Sites 배포, 선택적 D1/R2 바인딩을 구성합니다.
+ * 필요한 이유: Next.js 형태의 앱을 로컬에서 개발하고 Cloudflare 기반 Sites 환경에 같은 방식으로 빌드·배포하기 위해 필요합니다.
+ */
+
 import { sites } from '@openai/sites-vite-plugin';
 import tailwindcss from '@tailwindcss/postcss';
 import vinext from 'vinext';

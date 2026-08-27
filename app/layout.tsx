@@ -1,3 +1,8 @@
+/**
+ * 역할: 모든 페이지를 감싸는 루트 레이아웃으로 폰트, 전역 CSS, 문서 언어와 공유 메타데이터를 설정합니다.
+ * 필요한 이유: 페이지마다 반복할 공통 설정을 한곳에서 적용하고 검색·SNS 미리보기에 올바른 정보를 제공합니다.
+ */
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';

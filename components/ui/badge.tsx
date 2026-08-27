@@ -1,3 +1,8 @@
+/**
+ * 역할: 개수, 상태처럼 짧은 보조 정보를 작은 라벨 형태로 보여주는 shadcn Badge입니다.
+ * 필요한 이유: 거래 건수 등의 부가 정보를 본문보다 낮은 시각적 위계로 일관되게 표현합니다.
+ */
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"

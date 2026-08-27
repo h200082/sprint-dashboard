@@ -1,3 +1,9 @@
+/**
+ * 역할: 현재 페이지가 정보 구조의 어디에 있는지 보여주는 shadcn Breadcrumb 부품 모음입니다.
+ * 필요한 이유: 깊은 화면으로 확장할 때 사용자가 상위 경로를 이해하고 이동할 수 있는 표준 내비게이션이 필요합니다.
+ * 참고: 현재 대시보드는 간단한 경로 표시를 직접 구현했으며, 이 파일은 확장 학습용으로 준비돼 있습니다.
+ */
+
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"

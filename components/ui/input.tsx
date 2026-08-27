@@ -1,3 +1,8 @@
+/**
+ * 역할: 브라우저 입력 요소에 shadcn의 공통 크기, 테두리, 포커스 스타일을 적용합니다.
+ * 필요한 이유: 거래 검색 입력창이 다른 컨트롤과 시각적으로 어울리고 키보드 포커스를 분명하게 보여주도록 합니다.
+ */
+
 import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 

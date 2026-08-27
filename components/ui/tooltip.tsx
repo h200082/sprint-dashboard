@@ -1,3 +1,9 @@
+/**
+ * 역할: 요소에 마우스나 키보드 포커스를 두었을 때 짧은 설명을 띄우는 shadcn Tooltip입니다.
+ * 필요한 이유: 아이콘만 있는 조작이 많아질 때 화면을 복잡하게 만들지 않고 보조 설명을 제공할 수 있습니다.
+ * 참고: 현재 화면의 주요 아이콘에는 aria-label을 사용하며, 이 파일은 추가 설명이 필요할 때 쓰는 확장 부품입니다.
+ */
+
 "use client"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"

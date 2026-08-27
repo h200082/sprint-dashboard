@@ -1,4 +1,5 @@
 {
+  "_comment": "역할: shadcn CLI가 사용할 스타일, Tailwind CSS 위치와 import 별칭을 정의합니다. 필요한 이유: 새 UI 컴포넌트를 추가할 때 현재 프로젝트 구조에 맞는 코드를 일관되게 생성해야 합니다.",
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "base-nova",
   "rsc": true,

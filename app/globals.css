@@ -1,3 +1,8 @@
+/*
+ * 역할: 대시보드 전체의 색상 토큰, shadcn 테마, 공통 스타일과 반응형 규칙을 정의합니다.
+ * 필요한 이유: 여러 컴포넌트가 같은 디자인 규칙을 공유해 화면의 일관성을 유지하도록 합니다.
+ */
+
 @import 'tailwindcss';
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

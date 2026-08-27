@@ -1,3 +1,8 @@
+/**
+ * 역할: 제목, 설명, 본문과 푸터를 담을 수 있는 shadcn Card 표면을 제공합니다.
+ * 필요한 이유: KPI·차트·표처럼 성격이 다른 정보를 같은 테두리와 여백 체계로 묶어 대시보드 구조를 명확히 합니다.
+ */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

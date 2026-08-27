@@ -1,3 +1,8 @@
+/**
+ * 역할: 루트 경로(/)의 Quantico 대시보드 화면, 예제 데이터, 차트와 사용자 상호작용을 구성합니다.
+ * 필요한 이유: 사용자가 실제로 보는 KPI·활동 차트·거래 표를 하나의 페이지 흐름으로 조립하는 진입점입니다.
+ */
+
 "use client"
 
 import { useMemo, useState } from "react"
@@ -430,7 +435,14 @@ function ProductActivityCard() {
   const total = productActivity.reduce((sum, item) => sum + item.value, 0)
   const radius = 54
   const circumference = 2 * Math.PI * radius
-  let offset = 0
+  // 렌더링 중 외부 변수를 변경하지 않도록 각 조각의 시작 위치를 데이터로 미리 계산합니다.
+  const activitySegments = productActivity.map((item, index) => ({
+    ...item,
+    segment: (item.value / total) * circumference,
+    offset: productActivity
+      .slice(0, index)
+      .reduce((sum, previous) => sum + (previous.value / total) * circumference, 0),
+  }))
 
   return (
     <Card className="gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0 min-[740px]:col-span-2 min-[740px]:row-span-2">
@@ -464,26 +476,21 @@ function ProductActivityCard() {
           <svg viewBox="0 0 140 140" className="size-full" role="img" aria-label={"Total product activity " + total.toLocaleString()}>
             <circle cx="70" cy="70" r="45" fill="none" stroke="#2b302e" strokeWidth="1" strokeDasharray="1.5 3" />
             <circle cx="70" cy="70" r={radius} fill="none" stroke="#1d2220" strokeWidth="9" />
-            {productActivity.map((item) => {
-              const segment = (item.value / total) * circumference
-              const currentOffset = offset
-              offset += segment
-              return (
-                <circle
-                  key={item.label}
-                  cx="70"
-                  cy="70"
-                  r={radius}
-                  fill="none"
-                  stroke={item.color}
-                  strokeWidth="9"
-                  strokeLinecap="round"
-                  strokeDasharray={Math.max(segment - 7, 0) + " " + circumference}
-                  strokeDashoffset={-currentOffset}
-                  transform="rotate(-90 70 70)"
-                />
-              )
-            })}
+            {activitySegments.map((item) => (
+              <circle
+                key={item.label}
+                cx="70"
+                cy="70"
+                r={radius}
+                fill="none"
+                stroke={item.color}
+                strokeWidth="9"
+                strokeLinecap="round"
+                strokeDasharray={Math.max(item.segment - 7, 0) + " " + circumference}
+                strokeDashoffset={-item.offset}
+                transform="rotate(-90 70 70)"
+              />
+            ))}
           </svg>
           <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
             <strong className="text-[16px] font-semibold tabular-nums tracking-tight">415.236</strong>
