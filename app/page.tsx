@@ -3,8 +3,64 @@
  * 필요한 이유: 사용자가 실제로 보는 KPI·활동 차트·거래 표를 하나의 페이지 흐름으로 조립하는 진입점입니다.
  */
 
+/*
+ * ============================================================================
+ * 비전공자를 위한 이 파일 수정 순서
+ * ============================================================================
+ *
+ * 1. 터미널에서 `npm run dev`를 한 번 실행합니다.
+ * 2. 브라우저에서 http://localhost:3000 을 엽니다.
+ * 3. 이 파일에서 원하는 부분을 수정하고 Ctrl+S로 저장합니다.
+ * 4. 개발 서버의 HMR(Hot Module Replacement)이 변경된 부분만 다시 만들어
+ *    브라우저에 보통 1~2초 안에 반영합니다. 매번 새로고침할 필요가 없습니다.
+ *
+ * 처음에는 Ctrl+F로 아래 검색어를 찾아 한 구역씩 수정해 보세요.
+ *
+ * - `직접 수정 1` : KPI 카드 4개의 글자·숫자·색상
+ * - `직접 수정 2` : Product Activity의 항목·숫자·색상
+ * - `직접 수정 3` : 상단의 왼쪽/오른쪽 너비와 위치
+ * - `직접 수정 4` : KPI 카드의 2×2 배치와 간격
+ * - `MetricCard`   : KPI 카드 하나의 내부 디자인
+ * - `ProductActivityCard` : 도넛 카드의 내부 디자인
+ *
+ * ---------------------------------------------------------------------------
+ * 코드를 안전하게 수정하는 7가지 규칙
+ * ---------------------------------------------------------------------------
+ *
+ * 1. 글자는 따옴표 안쪽만 바꿉니다.
+ *    예: title: "Nominal Balance" → title: "현재 잔액"
+ *
+ * 2. 쉼표(,), 중괄호({ }), 대괄호([ ])는 데이터의 경계입니다.
+ *    처음에는 글자와 숫자만 바꾸고 이 기호는 삭제하지 마세요.
+ *
+ * 3. 색상은 `#`으로 시작하는 6자리 값입니다.
+ *    예: "#e33b91" → "#ff8800"
+ *
+ * 4. className 안의 단어는 Tailwind CSS 스타일입니다.
+ *    `gap-2`는 간격, `p-2.5`는 안쪽 여백, `rounded-lg`는 둥근 모서리입니다.
+ *    단어 사이는 반드시 공백으로 구분합니다.
+ *
+ * 5. `sm:`, `md:`, `min-[740px]:` 앞부분은 화면 너비 조건입니다.
+ *    예: `sm:grid-cols-2`는 화면이 640px 이상일 때 2열로 만든다는 뜻입니다.
+ *
+ * 6. 빨간 오류 화면이 나오면 방금 수정한 줄에서 따옴표·쉼표·괄호를 확인합니다.
+ *    해결이 어렵다면 Ctrl+Z로 직전 수정만 되돌리면 됩니다.
+ *
+ * 7. `components/ui`는 여러 화면이 공유하는 기본 부품입니다.
+ *    한 카드만 바꿀 때는 이 파일의 className을 수정하고,
+ *    모든 카드의 공통 기본값을 바꿀 때만 components/ui/card.tsx를 수정하세요.
+ *
+ * 화면에 보이지 않는 이 주석은 삭제하지 않아도 속도나 디자인에 영향을 주지 않습니다.
+ * ============================================================================
+ */
+
 "use client"
 
+// 이 문장은 이 파일이 클릭·입력처럼 브라우저에서 변하는 값을 사용한다는 표시입니다.
+// 삭제하면 아래의 useState, onClick 같은 상호작용 코드를 사용할 수 없으므로 그대로 두세요.
+
+// import는 다른 파일이나 라이브러리에서 필요한 기능을 가져오는 문장입니다.
+// 기존 화면의 글자·숫자·색상만 바꿀 때는 아래 import 영역을 수정할 필요가 없습니다.
 import { useMemo, useState } from "react"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -45,6 +101,12 @@ type NavigationItem = {
   children?: string[]
 }
 
+/*
+ * 사이드바 메뉴 데이터입니다.
+ * label은 화면에 보이는 메뉴 이름, icon은 왼쪽 아이콘입니다.
+ * children이 있는 항목은 아래에 하위 메뉴가 생깁니다.
+ * 메뉴 이름만 바꿀 때는 따옴표 안의 글자만 수정하세요.
+ */
 const navigation: NavigationItem[] = [
   { label: "Home", icon: Home },
   {
@@ -76,6 +138,20 @@ const navigation: NavigationItem[] = [
  * - points: 오른쪽 스파크라인의 굴곡을 바꿉니다. 숫자의 개수는 자유롭게 늘릴 수 있습니다.
  *
  * 카드를 추가하면 자동으로 그리드에 들어가지만, 사진과 같은 2×2 구성을 유지하려면 4개를 유지하세요.
+ *
+ * 초보자 실습 예시:
+ *
+ *   title: "Nominal Balance"  ← 따옴표 안쪽을 "현재 잔액"으로 바꿔 보기
+ *   value: "7,500.00"         ← 화면에 표시할 숫자 바꾸기
+ *   unit: "USD"               ← "원" 또는 "KRW"로 바꾸기
+ *   change: "1.19%"           ← 증감률 글자 바꾸기
+ *   trend: "up" as const      ← up은 초록 상승, down은 빨강 하락
+ *
+ * 각 카드 객체는 `{`에서 시작해 `}`에서 끝납니다.
+ * 카드와 카드 사이의 쉼표는 삭제하지 마세요.
+ * `[ ... ]`는 여러 카드를 순서대로 담는 "배열", `{ ... }`는 카드 하나의 정보를 묶는 "객체"입니다.
+ * metrics의 value는 계산하지 않고 그대로 보여주기 때문에 따옴표가 있는 문자열입니다.
+ * 반대로 productActivity의 value는 합계를 계산하므로 따옴표가 없는 숫자입니다.
  */
 const metrics = [
   {
@@ -104,6 +180,10 @@ const metrics = [
  * [직접 수정 2: 오른쪽 상단 Product Activity의 범례와 도넛]
  * label은 범례 이름, value는 도넛 비율과 오른쪽 숫자, color는 조각 색상입니다.
  * 항목을 추가하거나 삭제해도 도넛 둘레와 범례는 이 배열을 기준으로 자동 계산됩니다.
+ *
+ * 예: `{ label: "배송 준비", value: 110000, color: "#2fb4df" }`
+ * value는 계산에 사용하므로 따옴표 없이 숫자만 입력하세요.
+ * 네 value의 합계가 도넛 중앙 Total Activity 값이 됩니다.
  */
 const productActivity = [
   { label: "To Be Packed", value: 110000, color: "#2fb4df" },
@@ -119,7 +199,12 @@ const people = [
   { initials: "JT", color: "#2fb4df" },
 ]
 
-// Data stays separate from markup so adding a row never requires copying JSX.
+/*
+ * Customers Activity의 월별 막대그래프 데이터입니다.
+ * month는 아래 월 이름, paid와 checkout은 막대 높이입니다.
+ * active: true가 있는 달만 파랑·하늘색으로 강조됩니다.
+ * 데이터와 화면 코드를 분리했기 때문에 한 줄을 복사해 숫자만 바꾸면 월을 추가할 수 있습니다.
+ */
 const monthlyActivity = [
   { month: "Apr 2025", paid: 820, checkout: 1080 },
   { month: "May 2025", paid: 1450, checkout: 1720 },
@@ -130,6 +215,11 @@ const monthlyActivity = [
   { month: "Oct 2025", paid: 1780, checkout: 1540 },
 ]
 
+/*
+ * Customers Active의 국가별 데이터입니다.
+ * percent는 0~100 사이 숫자로 입력하며 진행 막대 길이를 결정합니다.
+ * colorClass의 마지막 색상 코드만 바꾸면 막대 색상이 바뀝니다.
+ */
 const activeCustomers = [
   { country: "United Kingdom", flag: "GB", count: "12,628", percent: 80, colorClass: "[&_[data-slot=progress-indicator]]:bg-[#25c77b]" },
   { country: "United States", flag: "US", count: "10,628", percent: 70, colorClass: "[&_[data-slot=progress-indicator]]:bg-[#ee7434]" },
@@ -138,6 +228,11 @@ const activeCustomers = [
   { country: "Spain", flag: "ES", count: "3,628", percent: 20, colorClass: "[&_[data-slot=progress-indicator]]:bg-[#2fb4df]" },
 ]
 
+/*
+ * Recent Transaction 표의 행 데이터입니다.
+ * `{ ... }` 한 묶음이 표의 한 행입니다. 기존 행 하나를 통째로 복사한 뒤
+ * id가 겹치지 않도록 바꾸면 새 거래를 가장 안전하게 추가할 수 있습니다.
+ */
 const transactions = [
   {
     id: "AR-47380416-61", product: "Meta Quest 3", detail: "512Gb - White",
@@ -180,6 +275,8 @@ const transactions = [
 /**
  * InitialAvatar: 이니셜과 색상만 받아 사용자 아바타를 반복해서 만드는 작은 재사용 컴포넌트입니다.
  * 크기를 바꾸려면 아래 Avatar의 기본 `size-6` 또는 호출 위치의 className을 수정하세요.
+ * React에서는 대문자로 시작하는 함수가 화면 조각인 "컴포넌트"가 됩니다.
+ * return 안의 JSX가 실제 화면이며 <InitialAvatar /> 형태로 여러 곳에서 재사용합니다.
  */
 function InitialAvatar({
   initials,
@@ -407,7 +504,9 @@ function Sparkline({
   const min = Math.min(...points)
   const max = Math.max(...points)
 
-  // Normalize data into a stable SVG viewBox so the chart scales with its card.
+  // points의 실제 숫자를 SVG 안의 x/y 좌표로 바꾸는 과정입니다.
+  // SVG는 왼쪽 위가 (0,0)이고 아래로 갈수록 y가 커지므로, 큰 값이 위에 오도록 height에서 빼 줍니다.
+  // 이 계산은 그래프 모양을 자동으로 만들기 때문에 points 값만 바꿀 때는 수정하지 않아도 됩니다.
   const coordinates = points.map((point, index) => {
     const x = (index / (points.length - 1)) * width
     const y = height - 4 - ((point - min) / (max - min || 1)) * (height - 10)
@@ -419,6 +518,7 @@ function Sparkline({
   const area = line + " L" + width + "," + height + " L0," + height + " Z"
 
   return (
+    // viewBox는 SVG 내부 좌표계입니다. CSS 너비가 변해도 선과 그라데이션이 같은 비율로 확대·축소됩니다.
     <svg viewBox={"0 0 " + width + " " + height} className="h-10 w-[74px]" aria-hidden="true">
       <defs>
         <linearGradient id={"fade-" + id} x1="0" y1="0" x2="0" y2="1">
@@ -438,11 +538,16 @@ function Sparkline({
  * 네 카드 전체의 배치는 이 컴포넌트가 아니라 HomePage 아래의 "직접 수정 3" 그리드에서 조절합니다.
  */
 function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
+  // metric은 부모가 <MetricCard metric={metric} /> 형태로 전달한 입력값(props)입니다.
+  // 같은 카드 디자인을 네 번 복사하지 않고, 서로 다른 데이터만 전달하기 위해 props를 사용합니다.
   const Icon = metric.icon
   const positive = metric.trend === "up"
   const TrendIcon = positive ? TrendingUp : TrendingDown
   const trendColor = positive ? "#25c77b" : "#eb3e5c"
 
+  // React에서는 HTML의 class 대신 className을 씁니다.
+  // 아래 클래스 예: flex=한 줄 정렬, gap-0=요소 사이 간격 없음, p-2.5=카드 안쪽 여백입니다.
+  // bg-[#101312]는 배경색, border-[#202523]는 테두리색, rounded-lg는 둥근 모서리입니다.
   return (
     <Card className="relative h-full min-h-[100px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0">
       <div className="flex items-center justify-between">
@@ -480,9 +585,16 @@ function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
  * 카드의 오른쪽/왼쪽 위치와 너비는 HomePage 아래의 "직접 수정 3" 그리드가 결정합니다.
  */
 function ProductActivityCard() {
+  // useState(초깃값)는 "현재 값"과 "값을 바꾸는 함수"를 한 쌍으로 만듭니다.
+  // 버튼이 setSelectedPeriod("1W")를 호출하면 React가 선택 상태를 바꾸고 화면을 다시 그립니다.
+  // selectedPeriod = "1W"처럼 직접 대입하면 화면이 갱신되지 않으므로 set 함수를 사용해야 합니다.
   const [selectedPeriod, setSelectedPeriod] = useState("1M")
+
+  // reduce는 배열의 여러 숫자를 하나로 합칩니다. 여기서는 네 활동 값의 총합을 계산합니다.
   const total = productActivity.reduce((sum, item) => sum + item.value, 0)
   const radius = 54
+
+  // 원 둘레 = 2 × 원주율(PI) × 반지름입니다. 각 value의 비율만큼 이 둘레를 나눠 도넛을 만듭니다.
   const circumference = 2 * Math.PI * radius
   // 렌더링 중 외부 변수를 변경하지 않도록 각 조각의 시작 위치를 데이터로 미리 계산합니다.
   const activitySegments = productActivity.map((item, index) => ({
@@ -503,6 +615,10 @@ function ProductActivityCard() {
           <h2 className="text-[10px] font-medium">Product Activity</h2>
         </div>
         <div className="flex items-center gap-1" aria-label="Time range">
+          {/*
+            cn()은 공통 클래스와 조건부 클래스를 하나로 합칩니다.
+            현재 선택한 period만 밝은 배경, 나머지는 흐린 글자로 표시됩니다.
+          */}
           {["1W", "1M", "3W", "YTD", "Total"].map((period) => (
             <Button
               key={period}
@@ -681,10 +797,14 @@ function ActiveCustomersCard() {
  * 행 데이터는 파일 위쪽 transactions 배열, 열 제목과 순서는 아래 TableHeader에서 수정합니다.
  */
 function TransactionsCard() {
+  // 아래 세 줄은 사용자가 클릭하거나 입력할 때 바뀌어야 하는 값을 기억합니다.
+  // false는 닫힘/표시 안 함, 빈 문자열("")은 검색어가 아직 없다는 뜻입니다.
   const [showSearch, setShowSearch] = useState(false)
   const [query, setQuery] = useState("")
   const [hideOptional, setHideOptional] = useState(false)
 
+  // useMemo는 query가 바뀔 때만 검색 결과를 다시 계산합니다.
+  // 처음 공부할 때는 이 검색 로직을 수정하지 않아도 됩니다.
   const filteredTransactions = useMemo(() => {
     const normalized = query.trim().toLowerCase()
     if (!normalized) return transactions
@@ -705,8 +825,10 @@ function TransactionsCard() {
         </div>
         <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
           {showSearch && (
+            /* showSearch가 true일 때만 검색 입력창을 화면에 만듭니다. 이를 조건부 렌더링이라고 합니다. */
             <div className="relative w-[140px] max-w-[40vw]">
               <Search className="absolute left-2 top-1/2 size-2.5 -translate-y-1/2 text-[#6f7672]" />
+              {/* 입력할 때마다 event.target.value에 현재 글자가 들어오고 setQuery가 화면 상태를 갱신합니다. */}
               <Input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -764,6 +886,10 @@ function TransactionsCard() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {/*
+            map()은 검색 결과 배열의 각 항목을 같은 모양의 표 행으로 바꿉니다.
+            key에는 React가 행을 구분할 수 있도록 중복되지 않는 거래 id를 사용합니다.
+          */}
           {filteredTransactions.map((item) => (
             <TableRow key={item.id} className="h-[35px] border-[#1b201e] hover:bg-[#141817]">
               <TableCell className="px-2 py-1 text-[8px] text-[#b9bfbb]">
@@ -819,10 +945,14 @@ function TransactionsCard() {
  * "어디에 배치할지"는 이 함수에서, "카드 안에 무엇을 표시할지"는 각 컴포넌트와 데이터 배열에서 수정합니다.
  */
 export default function HomePage() {
+  // 모바일 메뉴가 열렸는지를 true/false로 기억합니다.
+  // setMobileOpen(true)는 열기, setMobileOpen(false)는 닫기입니다.
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
+    // className의 `max-w-[1440px]`는 대시보드 최대 너비, `mx-auto`는 화면 중앙 정렬입니다.
     <main className="min-h-svh bg-[#f3f4f3] p-0 text-[#eef1ef] min-[900px]:p-2">
+      {/* && 왼쪽 값이 true일 때만 오른쪽 화면을 보여 줍니다. false이면 모바일 메뉴가 만들어지지 않습니다. */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 min-[900px]:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
           <button
@@ -864,6 +994,7 @@ export default function HomePage() {
                 metrics.map()이 배열의 4개 항목을 같은 MetricCard로 만들기 때문에 모두 같은 비율이 됩니다.
                 순서를 바꾸려면 파일 위쪽 metrics 배열의 항목 순서를 옮기세요.
                 카드 사이 간격은 gap-2, 카드 높이는 MetricCard의 min-h-[100px]에서 수정합니다.
+                map()의 key={metric.id}는 React가 네 카드를 구분하는 이름이므로 id는 서로 달라야 합니다.
               */}
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:grid-rows-2">
                 {metrics.map((metric) => (
@@ -874,7 +1005,12 @@ export default function HomePage() {
               {/* 이 컴포넌트를 KPI div보다 먼저 두면 Product Activity가 왼쪽으로 이동합니다. */}
               <ProductActivityCard />
             </section>
-            {/* minmax(0, 1fr) prevents charts from forcing their grid column wider. */}
+            {/*
+              중단은 Customers Activity / Customers Active 두 칸입니다.
+              1.43fr : 1fr는 약 59% : 41% 비율이며 첫 번째 숫자를 키우면 왼쪽 차트가 넓어집니다.
+              minmax(0, ...)의 0은 긴 차트나 글자가 열의 너비를 억지로 밀어내지 못하게 합니다.
+              mt-2는 위 카드와 8px 정도의 간격을 만듭니다.
+            */}
             <div className="mt-2 grid min-w-0 gap-2 md:grid-cols-[minmax(0,1.43fr)_minmax(270px,1fr)]">
               <CustomersActivityCard />
               <ActiveCustomersCard />
