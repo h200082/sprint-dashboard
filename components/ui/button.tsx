@@ -1,6 +1,7 @@
 /**
  * 역할: 크기·색상·상태 변형을 공유하는 shadcn Button과 스타일 규칙을 제공합니다.
  * 필요한 이유: 기간 선택, 초대, 내보내기 같은 동작이 동일한 접근성과 클릭 영역을 갖도록 합니다.
+ * 직접 수정: buttonVariants에서 variant는 색상, size는 높이와 여백을 담당합니다. 한 버튼만 바꾸려면 호출 위치의 className을 사용하세요.
  */
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"

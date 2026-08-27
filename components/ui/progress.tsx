@@ -1,6 +1,7 @@
 /**
  * 역할: 전체 대비 현재 값을 막대 길이로 표현하는 접근 가능한 shadcn Progress입니다.
  * 필요한 이유: 국가별 활성 고객 비율을 숫자와 함께 빠르게 비교할 수 있게 합니다.
+ * 직접 수정: 트랙의 공통 높이·배경은 ProgressTrack, 채워지는 부분은 ProgressIndicator에서 조절합니다.
  */
 
 "use client"

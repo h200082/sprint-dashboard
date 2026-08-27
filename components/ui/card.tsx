@@ -1,6 +1,7 @@
 /**
  * 역할: 제목, 설명, 본문과 푸터를 담을 수 있는 shadcn Card 표면을 제공합니다.
  * 필요한 이유: KPI·차트·표처럼 성격이 다른 정보를 같은 테두리와 여백 체계로 묶어 대시보드 구조를 명확히 합니다.
+ * 직접 수정: 이 파일은 모든 카드의 기본값입니다. KPI만 바꾸려면 app/page.tsx의 MetricCard 안 Card className을 수정하세요.
  */
 
 import * as React from "react"

@@ -63,6 +63,20 @@ const navigation: NavigationItem[] = [
   { label: "Payments", icon: CreditCard },
 ]
 
+/*
+ * [직접 수정 1: 왼쪽 상단 KPI 4개의 내용]
+ *
+ * 이 배열의 순서가 화면의 카드 순서가 됩니다.
+ * 1번·2번 항목은 첫째 줄, 3번·4번 항목은 둘째 줄에 표시됩니다.
+ *
+ * - title: 카드 제목을 바꿉니다.
+ * - value / unit: 큰 숫자와 단위를 바꿉니다.
+ * - change / trend: 증감률과 상승(up)·하락(down) 색상을 바꿉니다.
+ * - color / icon: 제목 왼쪽 원형 아이콘의 색상과 아이콘을 바꿉니다.
+ * - points: 오른쪽 스파크라인의 굴곡을 바꿉니다. 숫자의 개수는 자유롭게 늘릴 수 있습니다.
+ *
+ * 카드를 추가하면 자동으로 그리드에 들어가지만, 사진과 같은 2×2 구성을 유지하려면 4개를 유지하세요.
+ */
 const metrics = [
   {
     id: "balance", title: "Nominal Balance", value: "7,500.00", unit: "USD",
@@ -86,6 +100,11 @@ const metrics = [
   },
 ]
 
+/*
+ * [직접 수정 2: 오른쪽 상단 Product Activity의 범례와 도넛]
+ * label은 범례 이름, value는 도넛 비율과 오른쪽 숫자, color는 조각 색상입니다.
+ * 항목을 추가하거나 삭제해도 도넛 둘레와 범례는 이 배열을 기준으로 자동 계산됩니다.
+ */
 const productActivity = [
   { label: "To Be Packed", value: 110000, color: "#2fb4df" },
   { label: "Process Delivery", value: 98000, color: "#f0b51c" },
@@ -158,6 +177,10 @@ const transactions = [
   },
 ]
 
+/**
+ * InitialAvatar: 이니셜과 색상만 받아 사용자 아바타를 반복해서 만드는 작은 재사용 컴포넌트입니다.
+ * 크기를 바꾸려면 아래 Avatar의 기본 `size-6` 또는 호출 위치의 className을 수정하세요.
+ */
 function InitialAvatar({
   initials,
   color,
@@ -179,6 +202,10 @@ function InitialAvatar({
   )
 }
 
+/**
+ * MobileMenu: 화면이 좁아져 데스크톱 사이드바가 사라졌을 때 표시되는 모바일 내비게이션입니다.
+ * 메뉴 이름과 순서는 파일 위쪽의 `navigation` 배열에서 수정합니다.
+ */
 function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
   return (
     <div className="flex h-full flex-col bg-[#080a09]">
@@ -229,6 +256,10 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
   )
 }
 
+/**
+ * Sidebar: 사진 왼쪽의 로고, 메뉴, 도움말 카드와 사용자 프로필을 담당합니다.
+ * 너비는 첫 번째 aside의 `w-[182px]`, 표시 기준은 `min-[900px]`에서 수정할 수 있습니다.
+ */
 function Sidebar() {
   return (
     <aside className="hidden w-[182px] shrink-0 border-r border-[#1a1f1d] bg-[#080a09] min-[900px]:flex min-[900px]:flex-col">
@@ -314,6 +345,10 @@ function Sidebar() {
   )
 }
 
+/**
+ * DashboardHeader: 상단 경로, 참여자 아바타, Invite 버튼과 모바일 메뉴 버튼을 표시합니다.
+ * 헤더 높이는 header 요소의 `h-10`, 좌우 여백은 `px-3` 값을 바꾸면 됩니다.
+ */
 function DashboardHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   return (
     <header className="flex h-10 shrink-0 items-center justify-between border-b border-[#1b201e] px-3">
@@ -354,6 +389,10 @@ function DashboardHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   )
 }
 
+/**
+ * Sparkline: KPI 카드의 작은 추세 그래프를 SVG로 그립니다.
+ * 그래프 크기는 width/height와 svg의 `w-[74px]`, 선 굵기는 strokeWidth를 수정하세요.
+ */
 function Sparkline({
   id,
   points,
@@ -393,6 +432,11 @@ function Sparkline({
   )
 }
 
+/**
+ * MetricCard: metrics 배열의 한 항목을 제목·숫자·증감률·스파크라인 카드로 변환합니다.
+ * 카드 높이/안쪽 여백은 아래 Card의 `min-h-[100px]`와 `p-2.5`를 바꾸면 됩니다.
+ * 네 카드 전체의 배치는 이 컴포넌트가 아니라 HomePage 아래의 "직접 수정 3" 그리드에서 조절합니다.
+ */
 function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
   const Icon = metric.icon
   const positive = metric.trend === "up"
@@ -400,7 +444,7 @@ function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
   const trendColor = positive ? "#25c77b" : "#eb3e5c"
 
   return (
-    <Card className="relative min-h-[100px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0">
+    <Card className="relative h-full min-h-[100px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0">
       <div className="flex items-center justify-between">
         <div className="flex min-w-0 items-center gap-1.5">
           <span
@@ -430,6 +474,11 @@ function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
   )
 }
 
+/**
+ * ProductActivityCard: 기간 버튼, SVG 도넛, 중앙 합계와 범례를 묶은 오른쪽 상단 카드입니다.
+ * 도넛 크기는 radius와 `size-[142px]`, 범례 데이터는 파일 위쪽 productActivity 배열에서 수정합니다.
+ * 카드의 오른쪽/왼쪽 위치와 너비는 HomePage 아래의 "직접 수정 3" 그리드가 결정합니다.
+ */
 function ProductActivityCard() {
   const [selectedPeriod, setSelectedPeriod] = useState("1M")
   const total = productActivity.reduce((sum, item) => sum + item.value, 0)
@@ -445,7 +494,7 @@ function ProductActivityCard() {
   }))
 
   return (
-    <Card className="gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0 min-[740px]:col-span-2 min-[740px]:row-span-2">
+    <Card className="h-full min-h-[208px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-2.5 shadow-none ring-0">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-1.5">
           <span className="grid size-6 place-items-center rounded-full bg-[#f0b51c18] text-[#f0b51c]">
@@ -511,6 +560,10 @@ function ProductActivityCard() {
   )
 }
 
+/**
+ * CustomersActivityCard: 월별 Paid/Checkout 값을 막대그래프로 비교하는 중단 왼쪽 카드입니다.
+ * 월과 수치는 파일 위쪽 monthlyActivity 배열에서 수정합니다.
+ */
 function CustomersActivityCard() {
   return (
     <Card className="min-h-[210px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-0 shadow-none ring-0">
@@ -578,6 +631,10 @@ function CustomersActivityCard() {
   )
 }
 
+/**
+ * ActiveCustomersCard: 국가별 활성 고객 수와 비율을 진행 막대로 보여주는 중단 오른쪽 카드입니다.
+ * 국가, 수치, 색상은 파일 위쪽 activeCustomers 배열에서 수정합니다.
+ */
 function ActiveCustomersCard() {
   return (
     <Card className="min-h-[210px] gap-0 rounded-lg border border-[#202523] bg-[#101312] p-0 shadow-none ring-0">
@@ -619,6 +676,10 @@ function ActiveCustomersCard() {
   )
 }
 
+/**
+ * TransactionsCard: 검색, 열 숨기기와 최근 거래 목록을 담당하는 하단 표 컴포넌트입니다.
+ * 행 데이터는 파일 위쪽 transactions 배열, 열 제목과 순서는 아래 TableHeader에서 수정합니다.
+ */
 function TransactionsCard() {
   const [showSearch, setShowSearch] = useState(false)
   const [query, setQuery] = useState("")
@@ -753,6 +814,10 @@ function TransactionsCard() {
   )
 }
 
+/**
+ * HomePage: 사이드바·헤더·상단 KPI·차트·거래 표를 최종 화면 순서로 조립하는 페이지 컴포넌트입니다.
+ * "어디에 배치할지"는 이 함수에서, "카드 안에 무엇을 표시할지"는 각 컴포넌트와 데이터 배열에서 수정합니다.
+ */
 export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -777,14 +842,38 @@ export default function HomePage() {
         <section className="flex min-w-0 flex-1 flex-col">
           <DashboardHeader onOpenMenu={() => setMobileOpen(true)} />
           <div className="flex-1 p-2.5">
-            {/* Grid places major regions; Flex aligns content inside each row. */}
-            <div className="grid auto-rows-[minmax(100px,1fr)] gap-2 sm:grid-cols-2 min-[740px]:grid-cols-4">
-              <MetricCard metric={metrics[0]} />
-              <MetricCard metric={metrics[1]} />
+            {/*
+              [직접 수정 3: 사진과 같은 상단 전체 배치]
+
+              이 바깥 Grid는 상단을 "왼쪽 KPI 영역 / 오른쪽 Product Activity" 두 칸으로 나눕니다.
+              - min-[740px] 이상에서 2열이 되므로 Product Activity가 오른쪽으로 이동합니다.
+              - 두 개의 minmax(0,1fr)가 1:1 비율이라 좌우 너비가 같습니다.
+              - grid-rows-[208px]는 100px KPI 두 줄 + 8px 간격과 같은 전체 높이를 고정합니다.
+              - Product Activity를 더 넓게 만들려면 두 번째 값을 1.2fr처럼 바꾸세요.
+                예: min-[740px]:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]
+              - gap-2를 gap-3으로 바꾸면 왼쪽과 오른쪽 카드 사이가 더 벌어집니다.
+            */}
+            <section
+              aria-label="Key metrics and product activity"
+              className="grid items-stretch gap-2 min-[740px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] min-[740px]:grid-rows-[208px]"
+            >
+              {/*
+                [직접 수정 4: 왼쪽 KPI 4개의 2×2 동일 비율]
+
+                sm:grid-cols-2 = 가로 2칸, sm:grid-rows-2 = 세로 2칸입니다.
+                metrics.map()이 배열의 4개 항목을 같은 MetricCard로 만들기 때문에 모두 같은 비율이 됩니다.
+                순서를 바꾸려면 파일 위쪽 metrics 배열의 항목 순서를 옮기세요.
+                카드 사이 간격은 gap-2, 카드 높이는 MetricCard의 min-h-[100px]에서 수정합니다.
+              */}
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:grid-rows-2">
+                {metrics.map((metric) => (
+                  <MetricCard key={metric.id} metric={metric} />
+                ))}
+              </div>
+
+              {/* 이 컴포넌트를 KPI div보다 먼저 두면 Product Activity가 왼쪽으로 이동합니다. */}
               <ProductActivityCard />
-              <MetricCard metric={metrics[2]} />
-              <MetricCard metric={metrics[3]} />
-            </div>
+            </section>
             {/* minmax(0, 1fr) prevents charts from forcing their grid column wider. */}
             <div className="mt-2 grid min-w-0 gap-2 md:grid-cols-[minmax(0,1.43fr)_minmax(270px,1fr)]">
               <CustomersActivityCard />
