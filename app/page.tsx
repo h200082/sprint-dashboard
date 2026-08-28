@@ -20,6 +20,12 @@
  * - `직접 수정 2` : Product Activity의 항목·숫자·색상
  * - `직접 수정 3` : 상단의 왼쪽/오른쪽 너비와 위치
  * - `직접 수정 4` : KPI 카드의 2×2 배치와 간격
+ * - `직접 수정 5` : 대시보드 전체 너비·바깥 여백·둥근 프레임
+ * - `직접 수정 6` : 사이드바 너비와 모바일 메뉴 전환 시점
+ * - `직접 수정 7` : 본문 전체 여백과 카드 사이 세로 간격
+ * - `직접 수정 8` : Product Activity 안의 도넛/범례 배치
+ * - `직접 수정 9` : 중단 차트 2개의 비율·순서·반응형 시점
+ * - `직접 수정 10`: 거래 표의 최소 너비와 모바일 가로 스크롤
  * - `MetricCard`   : KPI 카드 하나의 내부 디자인
  * - `ProductActivityCard` : 도넛 카드의 내부 디자인
  *
@@ -355,7 +361,25 @@ function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
 
 /**
  * Sidebar: 사진 왼쪽의 로고, 메뉴, 도움말 카드와 사용자 프로필을 담당합니다.
- * 너비는 첫 번째 aside의 `w-[182px]`, 표시 기준은 `min-[900px]`에서 수정할 수 있습니다.
+ *
+ * [직접 수정 6: 사이드바 너비와 나타나는 시점]
+ *
+ * 아래 aside의 배치 클래스만 떼어 읽으면 다음 뜻입니다.
+ *
+ * - hidden: 우선 모든 화면에서 숨깁니다. Tailwind는 작은 화면 규칙부터 작성합니다.
+ * - w-[182px]: 사이드바 너비를 정확히 182px로 만듭니다.
+ * - shrink-0: 오른쪽 본문이 넓어져도 사이드바가 찌그러지지 않게 합니다. 처음에는 지우지 마세요.
+ * - min-[900px]:flex: 화면이 900px 이상일 때만 다시 보이게 하고 Flex 상자로 만듭니다.
+ * - min-[900px]:flex-col: 로고·메뉴·프로필을 위에서 아래 방향으로 쌓습니다.
+ *
+ * 안전한 실습 1 — 너비만 바꾸기:
+ * `w-[182px]` → `w-[220px]`로 바꾸면 메뉴 글자를 위한 공간이 넓어집니다.
+ * 다른 코드는 건드리지 않아도 되지만, 본문 영역은 그만큼 좁아집니다.
+ *
+ * 안전한 실습 2 — 태블릿에서도 사이드바 보이기:
+ * `min-[900px]` → `min-[800px]`로 바꿀 수 있습니다.
+ * 단, Ctrl+F로 `min-[900px]`를 검색해 모바일 메뉴 버튼·오버레이·바깥 여백도
+ * 모두 같은 `min-[800px]`로 바꿔야 두 메뉴가 동시에 보이는 문제를 막을 수 있습니다.
  */
 function Sidebar() {
   return (
@@ -444,7 +468,17 @@ function Sidebar() {
 
 /**
  * DashboardHeader: 상단 경로, 참여자 아바타, Invite 버튼과 모바일 메뉴 버튼을 표시합니다.
- * 헤더 높이는 header 요소의 `h-10`, 좌우 여백은 `px-3` 값을 바꾸면 됩니다.
+ *
+ * 배치 클래스를 하나씩 해석하면 다음과 같습니다.
+ *
+ * - flex: 경로와 Invite 영역을 가로 한 줄에 놓습니다.
+ * - h-10: 높이 40px입니다. h-12로 바꾸면 48px이 됩니다.
+ * - items-center: 내용물을 헤더 높이의 세로 중앙에 맞춥니다.
+ * - justify-between: 첫 묶음은 왼쪽 끝, 두 번째 묶음은 오른쪽 끝으로 보냅니다.
+ * - px-3: 좌우 안쪽 여백 12px입니다. px-5로 바꾸면 양옆이 더 여유로워집니다.
+ * - shrink-0: 본문이 길어도 헤더 높이가 줄지 않게 합니다. 유지하는 것이 안전합니다.
+ *
+ * 실습할 때는 먼저 h-10 또는 px-3 중 하나만 바꾸고 저장해 차이를 비교하세요.
  */
 function DashboardHeader({ onOpenMenu }: { onOpenMenu: () => void }) {
   return (
@@ -536,6 +570,17 @@ function Sparkline({
  * MetricCard: metrics 배열의 한 항목을 제목·숫자·증감률·스파크라인 카드로 변환합니다.
  * 카드 높이/안쪽 여백은 아래 Card의 `min-h-[100px]`와 `p-2.5`를 바꾸면 됩니다.
  * 네 카드 전체의 배치는 이 컴포넌트가 아니라 HomePage 아래의 "직접 수정 3" 그리드에서 조절합니다.
+ *
+ * [높이를 바꿀 때 꼭 알아둘 계산]
+ * 현재 한 카드 최소 높이 100px × 2줄 + 카드 사이 gap-2(8px) = 총 208px입니다.
+ * 따라서 카드 높이를 120px로 키우면 총높이는 `120 × 2 + 8 = 248px`이 됩니다.
+ * 이 경우 아래 3곳을 한 세트로 바꿔야 위쪽 카드들의 아랫선이 맞습니다.
+ *
+ * 1. MetricCard의 `min-h-[100px]` → `min-h-[120px]`
+ * 2. ProductActivityCard의 `min-h-[208px]` → `min-h-[248px]`
+ * 3. HomePage 상단 Grid의 `grid-rows-[208px]` → `grid-rows-[248px]`
+ *
+ * 크기 실습은 gap과 비율 실습에 익숙해진 다음 하는 것이 좋습니다.
  */
 function MetricCard({ metric }: { metric: (typeof metrics)[number] }) {
   // metric은 부모가 <MetricCard metric={metric} /> 형태로 전달한 입력값(props)입니다.
@@ -636,6 +681,27 @@ function ProductActivityCard() {
           ))}
         </div>
       </div>
+      {/*
+        [직접 수정 8: Product Activity 안의 도넛 / 범례 배치]
+
+        현재 동작:
+        - grid: 도넛과 범례를 큰 칸 단위로 배치합니다.
+        - 작은 화면: 열 개수를 지정하지 않아 도넛 다음 줄에 범례가 쌓입니다.
+        - sm: 화면이 640px 이상일 때 적용되는 조건입니다.
+        - sm:grid-cols-[150px_minmax(0,1fr)]: 왼쪽 도넛 칸은 150px,
+          오른쪽 범례 칸은 남은 공간 전체를 사용합니다.
+        - minmax(0,1fr)의 0은 긴 범례 글자가 카드 너비를 밀어내지 못하게 합니다.
+        - gap-3은 두 칸 사이 약 12px, pt-2는 제목 아래 약 8px 여백입니다.
+
+        복사해서 해볼 실습:
+        1. 도넛 칸 넓히기: `150px` → `180px`
+           이때 바로 아래 `size-[142px]`도 `size-[170px]` 정도로 함께 키워 보세요.
+        2. 항상 세로로 쌓기: `sm:grid-cols-[150px_minmax(0,1fr)]`만 삭제합니다.
+        3. 작은 화면부터 가로로 놓기: `sm:`을 지워
+           `grid-cols-[150px_minmax(0,1fr)]`로 만듭니다. 320px 화면에서는 좁을 수 있습니다.
+        4. 도넛을 오른쪽으로 옮기기: 도넛 div에 `sm:order-2`, 범례 div에
+           `sm:order-1`을 추가합니다. order는 보이는 순서만 바꾸며 데이터는 바꾸지 않습니다.
+      */}
       <div className="grid flex-1 items-center gap-3 pt-2 sm:grid-cols-[150px_minmax(0,1fr)]">
         <div className="relative mx-auto size-[142px]">
           <svg viewBox="0 0 140 140" className="size-full" role="img" aria-label={"Total product activity " + total.toLocaleString()}>
@@ -679,6 +745,14 @@ function ProductActivityCard() {
 /**
  * CustomersActivityCard: 월별 Paid/Checkout 값을 막대그래프로 비교하는 중단 왼쪽 카드입니다.
  * 월과 수치는 파일 위쪽 monthlyActivity 배열에서 수정합니다.
+ *
+ * 내부 차트 배치 실습:
+ * - `grid-cols-[28px_minmax(0,1fr)]`에서 28px은 왼쪽 Y축 숫자 칸입니다.
+ *   숫자가 잘리면 28px을 36px로 바꿉니다. 두 번째 칸은 남는 차트 영역입니다.
+ * - 막대의 `w-[42%]`는 각 월 칸에서 막대 하나가 차지하는 비율입니다.
+ *   48%로 올리면 굵어지고 32%로 내리면 가늘어집니다.
+ * - `max-w-[18px]`은 큰 화면에서 막대가 지나치게 굵어지는 것을 막는 최대값입니다.
+ * - 이 카드 높이를 바꿀 때는 ActiveCustomersCard의 `min-h-[210px]`도 같은 값으로 맞추세요.
  */
 function CustomersActivityCard() {
   return (
@@ -750,6 +824,8 @@ function CustomersActivityCard() {
 /**
  * ActiveCustomersCard: 국가별 활성 고객 수와 비율을 진행 막대로 보여주는 중단 오른쪽 카드입니다.
  * 국가, 수치, 색상은 파일 위쪽 activeCustomers 배열에서 수정합니다.
+ * 이 카드의 바깥 너비와 왼쪽 차트와의 비율은 HomePage의 "직접 수정 9"에서 조절합니다.
+ * 카드 자체 높이를 바꾸면 CustomersActivityCard의 `min-h-[210px]`도 같은 값으로 바꿔야 합니다.
  */
 function ActiveCustomersCard() {
   return (
@@ -795,6 +871,14 @@ function ActiveCustomersCard() {
 /**
  * TransactionsCard: 검색, 열 숨기기와 최근 거래 목록을 담당하는 하단 표 컴포넌트입니다.
  * 행 데이터는 파일 위쪽 transactions 배열, 열 제목과 순서는 아래 TableHeader에서 수정합니다.
+ *
+ * [직접 수정 10: 좁은 화면에서 표가 작동하는 방법]
+ * Card의 `overflow-hidden`은 둥근 카드 밖으로 내용이 삐져나오지 않게 합니다.
+ * 그 안의 표 감싸개 `overflow-x-auto`가 표 부분에만 가로 스크롤을 만듭니다.
+ * Table의 `min-w-[760px]`는 화면이 좁아도 각 열을 읽을 최소 폭을 유지합니다.
+ * 760px을 너무 작게 줄이면 이름·날짜·이메일이 겹치므로, 처음에는 680~900px 범위에서만 실습하세요.
+ * 검색창의 `w-[140px]`은 기본 너비, `max-w-[40vw]`는 작은 화면에서 화면 폭의 40%를
+ * 넘지 못하게 하는 안전장치입니다.
  */
 function TransactionsCard() {
   // 아래 세 줄은 사용자가 클릭하거나 입력할 때 바뀌어야 하는 값을 기억합니다.
@@ -949,8 +1033,34 @@ export default function HomePage() {
   // setMobileOpen(true)는 열기, setMobileOpen(false)는 닫기입니다.
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  /*
+   * [직접 수정 5: 대시보드 전체 폭과 바깥 프레임]
+   *
+   * 아래 main은 브라우저 전체 바탕, 그 안의 첫 번째 div는 실제 대시보드 프레임입니다.
+   * 두 상자를 구분해서 생각하면 배치를 훨씬 쉽게 수정할 수 있습니다.
+   *
+   * main의 핵심 클래스:
+   * - min-h-svh: 내용이 짧아도 화면 높이를 최소한 가득 채웁니다.
+   * - bg-[#f3f4f3]: 둥근 검정 대시보드 바깥에서 보이는 밝은 배경입니다.
+   * - p-0: 모바일에서는 바깥 여백을 없애 공간을 아낍니다.
+   * - min-[900px]:p-2: 900px 이상에서 사방 약 8px의 바깥 여백을 만듭니다.
+   *
+   * 안쪽 프레임 div의 핵심 클래스:
+   * - w-full: 사용할 수 있는 너비를 전부 사용합니다.
+   * - max-w-[1440px]: 단, 1440px보다 더 넓어지지는 않습니다.
+   * - mx-auto: 최대 너비에 도달한 뒤 남는 좌우 공간을 똑같이 나눠 중앙에 둡니다.
+   * - flex: Sidebar와 오른쪽 본문을 가로로 나란히 놓습니다.
+   * - overflow-hidden: 둥근 프레임 밖으로 자식 배경이나 표가 튀어나오지 않게 합니다.
+   *
+   * 추천 실습:
+   * 1. 조밀한 화면: `max-w-[1440px]` → `max-w-[1200px]`
+   * 2. 모니터 폭 전체 사용: `max-w-[1440px]` → `max-w-none`
+   * 3. 바깥 여백 늘리기: main의 `min-[900px]:p-2` → `min-[900px]:p-6`
+   * 4. 모서리 더 둥글게: `rounded-[18px]` → `rounded-[28px]`
+   *
+   * 한 번에 하나만 바꿔 저장하고 브라우저 폭도 같이 조절해 보세요.
+   */
   return (
-    // className의 `max-w-[1440px]`는 대시보드 최대 너비, `mx-auto`는 화면 중앙 정렬입니다.
     <main className="min-h-svh bg-[#f3f4f3] p-0 text-[#eef1ef] min-[900px]:p-2">
       {/* && 왼쪽 값이 true일 때만 오른쪽 화면을 보여 줍니다. false이면 모바일 메뉴가 만들어지지 않습니다. */}
       {mobileOpen && (
@@ -969,19 +1079,67 @@ export default function HomePage() {
 
       <div className="mx-auto flex min-h-svh w-full max-w-[1440px] overflow-hidden border-[#202523] bg-[#0c0f0e] min-[900px]:min-h-[calc(100svh-16px)] min-[900px]:rounded-[18px] min-[900px]:border">
         <Sidebar />
+        {/*
+          min-w-0은 오른쪽 본문이 차트나 표의 최소 너비 때문에 프레임 밖으로 밀려나는 것을 막습니다.
+          flex-1은 Sidebar가 차지한 공간을 뺀 나머지 너비를 본문이 모두 사용한다는 뜻입니다.
+          둘 다 '넘침 방지 + 남은 공간 사용' 역할이므로 초반 배치 실습에서는 유지하세요.
+        */}
         <section className="flex min-w-0 flex-1 flex-col">
           <DashboardHeader onOpenMenu={() => setMobileOpen(true)} />
+          {/*
+            [직접 수정 7: 본문 전체 여백]
+
+            flex-1은 헤더 아래 남는 세로 공간을 본문이 채우게 합니다.
+            p-2.5는 모든 카드와 본문 가장자리 사이에 약 10px 여백을 만듭니다.
+            더 시원한 화면은 p-4, 더 촘촘한 화면은 p-1.5로 바꿔 비교할 수 있습니다.
+            여기의 p 값은 '본문 바깥 여백'이고, 각 Card의 p 값은 '카드 안쪽 여백'이라 서로 다릅니다.
+          */}
           <div className="flex-1 p-2.5">
             {/*
               [직접 수정 3: 사진과 같은 상단 전체 배치]
 
-              이 바깥 Grid는 상단을 "왼쪽 KPI 영역 / 오른쪽 Product Activity" 두 칸으로 나눕니다.
-              - min-[740px] 이상에서 2열이 되므로 Product Activity가 오른쪽으로 이동합니다.
-              - 두 개의 minmax(0,1fr)가 1:1 비율이라 좌우 너비가 같습니다.
-              - grid-rows-[208px]는 100px KPI 두 줄 + 8px 간격과 같은 전체 높이를 고정합니다.
-              - Product Activity를 더 넓게 만들려면 두 번째 값을 1.2fr처럼 바꾸세요.
-                예: min-[740px]:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]
-              - gap-2를 gap-3으로 바꾸면 왼쪽과 오른쪽 카드 사이가 더 벌어집니다.
+              이 바깥 Grid는 상단을 "왼쪽 KPI 묶음 / 오른쪽 Product Activity" 두 칸으로 나눕니다.
+
+              화면이 740px 이상일 때 보이는 구조:
+
+                ┌─────────────────────┬─────────────────────┐
+                │ KPI 카드 2 × 2      │ Product Activity    │
+                └─────────────────────┴─────────────────────┘
+
+              화면이 740px보다 작을 때는 `min-[740px]:...` 조건이 적용되지 않아 다음처럼 쌓입니다.
+
+                ┌─────────────────────┐
+                │ KPI 카드 묶음       │
+                ├─────────────────────┤
+                │ Product Activity    │
+                └─────────────────────┘
+
+              클래스 해석:
+              - grid: 자식을 행과 열로 놓는 큰 배치 도구입니다.
+              - items-stretch: 같은 행의 두 자식을 행 높이만큼 늘려 아랫선을 맞춥니다.
+              - gap-2: 두 영역 사이 간격 약 8px입니다. gap-3은 약 12px, gap-4는 약 16px입니다.
+              - min-[740px]: 740px 이상에서만 뒤의 규칙을 적용하는 사용자 지정 화면 기준입니다.
+              - grid-cols-[A_B]: A 너비의 첫 열과 B 너비의 둘째 열을 만듭니다.
+                대괄호 안에서 밑줄(_)은 CSS의 공백 역할을 합니다.
+              - fr은 '남은 공간의 몫'입니다. 1fr + 1fr은 1:1, 1.2fr + 1fr은 1.2:1입니다.
+              - minmax(0,1fr)는 최소 0부터 최대 1몫까지 허용하여 긴 내용의 넘침을 막습니다.
+                처음에는 minmax를 지우지 말고 안의 fr 숫자만 바꾸세요.
+              - grid-rows-[208px]는 데스크톱 상단 높이를 208px로 고정합니다.
+
+              복사해서 해볼 실습:
+              1. Product Activity를 조금 넓게:
+                 `min-[740px]:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]`
+              2. KPI 영역을 더 넓게:
+                 `min-[740px]:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]`
+              3. 항상 위아래로 쌓기:
+                 `min-[740px]:grid-cols-[...]`와 `min-[740px]:grid-rows-[208px]`를 삭제합니다.
+              4. Product Activity를 왼쪽으로 옮기기:
+                 아래 JSX 두 줄의 순서를 바꿔 `<ProductActivityCard />`를 KPI div보다 먼저 둡니다.
+              5. 나란히 놓이는 시점을 늦추기:
+                 두 `min-[740px]`를 `min-[1000px]`로 같이 바꿉니다.
+
+              비율을 바꿀 때는 높이를 건드릴 필요가 없습니다. 높이 실습은 MetricCard 주석의
+              `100px × 2 + 8px = 208px` 계산을 먼저 읽고 세 군데를 함께 수정하세요.
             */}
             <section
               aria-label="Key metrics and product activity"
@@ -990,11 +1148,34 @@ export default function HomePage() {
               {/*
                 [직접 수정 4: 왼쪽 KPI 4개의 2×2 동일 비율]
 
-                sm:grid-cols-2 = 가로 2칸, sm:grid-rows-2 = 세로 2칸입니다.
-                metrics.map()이 배열의 4개 항목을 같은 MetricCard로 만들기 때문에 모두 같은 비율이 됩니다.
-                순서를 바꾸려면 파일 위쪽 metrics 배열의 항목 순서를 옮기세요.
-                카드 사이 간격은 gap-2, 카드 높이는 MetricCard의 min-h-[100px]에서 수정합니다.
-                map()의 key={metric.id}는 React가 네 카드를 구분하는 이름이므로 id는 서로 달라야 합니다.
+                현재 작은 화면에서는 1열이고, 640px 이상(sm)부터 2열 × 2줄입니다.
+
+                  metrics 배열 순서       실제 위치
+                  1번 Balance       →      왼쪽 위
+                  2번 Stock         →      오른쪽 위
+                  3번 Revenue       →      왼쪽 아래
+                  4번 Expense       →      오른쪽 아래
+
+                클래스 해석:
+                - grid-cols-1: 기본은 가로 1칸이라 카드가 세로로 쌓입니다.
+                - sm:grid-cols-2: 640px 이상에서는 가로 2칸입니다.
+                - sm:grid-rows-2: 640px 이상에서는 세로 2칸입니다.
+                - gap-2: 가로와 세로 카드 사이를 모두 약 8px 띄웁니다.
+                - gap-x-4 gap-y-2처럼 쓰면 가로 간격과 세로 간격을 서로 다르게 만들 수 있습니다.
+
+                추천 실습:
+                1. 카드 간격만 비교: `gap-2` → `gap-4` → 다시 `gap-2`
+                2. 가로/세로 간격 분리: `gap-2` → `gap-x-4 gap-y-2`
+                3. 모바일에서도 2열: 앞의 `grid-cols-1`을 `grid-cols-2`로 바꾸고
+                   `sm:grid-cols-2`는 삭제합니다. 단, 320px 화면에서는 글자가 좁아질 수 있습니다.
+                4. 항상 1열: `sm:grid-cols-2 sm:grid-rows-2`를 삭제합니다.
+                   이 경우 전체 높이가 208px보다 커지므로 바깥 고정 높이도 함께 제거해야 합니다.
+                5. 네 카드를 한 줄로 보기(고급): 바깥 상단을 먼저 세로 배치로 만든 다음
+                   이 div를 `grid grid-cols-1 gap-2 sm:grid-cols-2 min-[1000px]:grid-cols-4`로 바꿉니다.
+
+                metrics.map()은 배열의 4개 데이터를 같은 MetricCard 모양으로 반복 생성합니다.
+                카드 순서를 바꾸려면 JSX를 복사하지 말고 파일 위쪽 metrics 배열의 객체 순서를 옮기세요.
+                key={metric.id}는 React가 카드를 구분하는 이름이므로 id는 서로 달라야 합니다.
               */}
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:grid-rows-2">
                 {metrics.map((metric) => (
@@ -1006,15 +1187,36 @@ export default function HomePage() {
               <ProductActivityCard />
             </section>
             {/*
-              중단은 Customers Activity / Customers Active 두 칸입니다.
-              1.43fr : 1fr는 약 59% : 41% 비율이며 첫 번째 숫자를 키우면 왼쪽 차트가 넓어집니다.
-              minmax(0, ...)의 0은 긴 차트나 글자가 열의 너비를 억지로 밀어내지 못하게 합니다.
-              mt-2는 위 카드와 8px 정도의 간격을 만듭니다.
+              [직접 수정 9: 중단 Customers Activity / Customers Active 배치]
+
+              기본 화면에서는 두 컴포넌트가 코드 순서대로 위아래로 쌓입니다.
+              md:는 화면이 768px 이상일 때 적용되어 그때부터 두 카드를 나란히 놓습니다.
+
+              - mt-2: 상단 카드 묶음과 중단 카드 사이의 바깥 간격 약 8px입니다.
+              - min-w-0: 차트나 긴 국가명이 전체 프레임을 밀어내지 않게 합니다. 유지하세요.
+              - gap-2: 두 카드 사이 간격입니다.
+              - 1.43fr : 1fr는 약 59% : 41% 비율입니다.
+              - 오른쪽 `minmax(270px,1fr)`의 270px은 국가명과 숫자가 겹치지 않을 최소 폭입니다.
+
+              복사해서 해볼 실습:
+              1. 정확히 반반: `md:grid-cols-[minmax(0,1fr)_minmax(270px,1fr)]`
+              2. 왼쪽을 약 2/3: `md:grid-cols-[minmax(0,2fr)_minmax(270px,1fr)]`
+              3. 더 작은 화면부터 나란히: `md:` → `sm:` (640px부터 적용)
+              4. 더 큰 화면에서만 나란히: `md:` → `lg:` (1024px부터 적용)
+              5. 오른쪽 카드를 왼쪽으로: 아래 컴포넌트 두 줄의 순서를 바꿉니다.
+              6. 항상 세로로 보기: `md:grid-cols-[...]` 부분만 삭제합니다.
+
+              처음에는 오른쪽 최소 폭 270px을 유지한 채 fr 비율만 바꾸는 것이 안전합니다.
             */}
             <div className="mt-2 grid min-w-0 gap-2 md:grid-cols-[minmax(0,1.43fr)_minmax(270px,1fr)]">
               <CustomersActivityCard />
               <ActiveCustomersCard />
             </div>
+            {/*
+              거래 표는 별도의 열 비율 없이 한 줄 전체를 차지합니다.
+              mt-2는 중단 카드와 표 사이의 간격입니다. mt-4로 바꾸면 약 16px로 넓어집니다.
+              표의 모바일 가로 스크롤과 열 너비는 TransactionsCard의 "직접 수정 10" 주석에서 수정합니다.
+            */}
             <div className="mt-2">
               <TransactionsCard />
             </div>
