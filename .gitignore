@@ -39,3 +39,7 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# 이 저장소는 프론트엔드 대시보드만 공유합니다.
+# 별도로 만든 Python/SQLAlchemy 연습 폴더가 `git add .`에 섞이지 않도록 제외합니다.
+/practice/
